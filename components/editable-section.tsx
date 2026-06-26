@@ -126,7 +126,11 @@ export function EditableSection({
           {loading ? (
             <div className="px-4 py-4 text-sm text-[#444] border-t border-[#1c1c1c]">Loading...</div>
           ) : rows.length === 0 ? (
-            <div className="px-4 py-4 text-sm text-[#444] border-t border-[#1c1c1c]">No entries yet.</div>
+            <div className="px-4 py-4 border-t border-[#1c1c1c]">
+              <div className="border border-dashed border-[#2a2a2a] rounded px-4 py-5 text-center text-xs text-[#444]">
+                No entries yet. Use &ldquo;Add row&rdquo; below to get started.
+              </div>
+            </div>
           ) : (
             <div className="divide-y divide-[#1c1c1c] border-t border-[#1c1c1c]">
               {rows.map(row => (
@@ -157,10 +161,10 @@ export function EditableSection({
           )}
 
           {/* Add row */}
-          <div className="px-4 py-2.5 border-t border-[#1c1c1c]">
+          <div className="px-4 py-3 border-t border-[#1c1c1c]">
             <button
               onClick={handleAdd}
-              className="flex items-center gap-1.5 text-xs text-[#555] hover:text-[#f59e0b] transition-colors"
+              className="flex items-center gap-1.5 text-xs text-[#a1a1aa] border border-dashed border-[#333] hover:border-[#f59e0b] hover:text-[#f59e0b] px-3 py-1.5 rounded transition-colors"
             >
               <Plus className="size-3.5" />
               Add row
