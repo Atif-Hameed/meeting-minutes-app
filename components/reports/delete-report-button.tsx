@@ -18,7 +18,7 @@ export function DeleteReportButton({ id, title }: DeleteReportButtonProps) {
     <button
       onClick={handleDelete}
       title="Delete report"
-      className="flex items-center justify-center opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#ef4444] transition-all"
+      className="flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 text-[#444] hover:text-[#ef4444] transition-all"
     >
       <Trash2 className="size-3.5" />
     </button>

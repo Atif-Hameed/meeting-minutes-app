@@ -109,21 +109,6 @@ export function EditableSection({
 
       {open && (
         <div>
-          {/* Column header */}
-          <div className="flex items-center px-4 py-2 border-t border-[#2a2a2a] bg-[#0d0d0d]">
-            {columns.map(col => (
-              <div
-                key={col.key}
-                style={col.type === 'checkbox' ? { width: 52, flexShrink: 0 } : { flex: col.flex ?? 1, minWidth: 0 }}
-                className="text-[10px] font-medium text-[#444] uppercase tracking-widest pr-3"
-              >
-                {col.label}
-              </div>
-            ))}
-            <div style={{ width: 28, flexShrink: 0 }} />
-          </div>
-
-          {/* Rows */}
           {loading ? (
             <div className="px-4 py-4 text-sm text-[#444] border-t border-[#1c1c1c]">Loading...</div>
           ) : rows.length === 0 ? (
@@ -133,31 +118,49 @@ export function EditableSection({
               </div>
             </div>
           ) : (
-            <div className="divide-y divide-[#1c1c1c] border-t border-[#1c1c1c]">
-              {rows.map(row => (
-                <div key={String(row.id)} className="flex items-center px-4 py-1 group hover:bg-[#141414] transition-colors">
+            <div className="overflow-x-auto border-t border-[#2a2a2a]">
+              <div className="min-w-[560px]">
+                {/* Column header */}
+                <div className="flex items-center px-4 py-2 bg-[#0d0d0d]">
                   {columns.map(col => (
                     <div
                       key={col.key}
                       style={col.type === 'checkbox' ? { width: 52, flexShrink: 0 } : { flex: col.flex ?? 1, minWidth: 0 }}
-                      className="pr-2"
+                      className="text-[10px] font-medium text-[#444] uppercase tracking-widest pr-3"
                     >
-                      <EditableCell
-                        column={col}
-                        value={row[col.key] as CellValue}
-                        onChange={value => handleUpdate(row.id as string, col.key, value)}
-                      />
+                      {col.label}
                     </div>
                   ))}
-                  <button
-                    onClick={() => handleDelete(row.id as string)}
-                    style={{ width: 28, flexShrink: 0 }}
-                    className="flex justify-center opacity-0 group-hover:opacity-100 text-[#444] hover:text-red-400 transition-all"
-                  >
-                    <Trash2 className="size-3.5" />
-                  </button>
+                  <div style={{ width: 28, flexShrink: 0 }} />
                 </div>
-              ))}
+                {/* Rows */}
+                <div className="divide-y divide-[#1c1c1c] border-t border-[#1c1c1c]">
+                  {rows.map(row => (
+                    <div key={String(row.id)} className="flex items-center px-4 py-1 group hover:bg-[#141414] transition-colors">
+                      {columns.map(col => (
+                        <div
+                          key={col.key}
+                          style={col.type === 'checkbox' ? { width: 52, flexShrink: 0 } : { flex: col.flex ?? 1, minWidth: 0 }}
+                          className="pr-2"
+                        >
+                          <EditableCell
+                            column={col}
+                            value={row[col.key] as CellValue}
+                            onChange={value => handleUpdate(row.id as string, col.key, value)}
+                          />
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => handleDelete(row.id as string)}
+                        style={{ width: 28, flexShrink: 0 }}
+                        className="flex justify-center opacity-0 group-hover:opacity-100 text-[#444] hover:text-red-400 transition-all"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

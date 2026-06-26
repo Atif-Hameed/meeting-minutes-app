@@ -50,7 +50,7 @@ export function ReportEditor({ report: initialReport }: ReportEditorProps) {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-8">
+    <main className="max-w-6xl mx-auto px-4 md:px-6 py-8">
       <Link
         href="/"
         className="inline-flex items-center gap-1.5 text-xs text-[#555] hover:text-[#a1a1aa] mb-7 transition-colors"
@@ -69,31 +69,37 @@ export function ReportEditor({ report: initialReport }: ReportEditorProps) {
               placeholder="Meeting Title"
               className="text-xl font-semibold text-white w-full"
             />
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-2.5">
-              <span className="text-xs text-[#555]">Date</span>
-              <InlineField
-                value={report.date ?? ''}
-                onSave={v => saveField('date', v)}
-                type="date"
-                displayFormatter={formatDate}
-                className="text-sm text-[#a1a1aa]"
-              />
-              <span className="text-[#333]">·</span>
-              <span className="text-xs text-[#555]">Location</span>
-              <InlineField
-                value={report.location ?? ''}
-                onSave={v => saveField('location', v)}
-                placeholder="—"
-                className="text-sm text-[#a1a1aa]"
-              />
-              <span className="text-[#333]">·</span>
-              <span className="text-xs text-[#555]">Prepared by</span>
-              <InlineField
-                value={report.prepared_by ?? ''}
-                onSave={v => saveField('prepared_by', v)}
-                placeholder="—"
-                className="text-sm text-[#a1a1aa]"
-              />
+            <div className="mt-2.5 flex flex-col md:flex-row md:flex-wrap md:items-center gap-y-1.5 md:gap-x-5 md:gap-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#555]">Date</span>
+                <InlineField
+                  value={report.date ?? ''}
+                  onSave={v => saveField('date', v)}
+                  type="date"
+                  displayFormatter={formatDate}
+                  className="text-sm text-[#a1a1aa]"
+                />
+              </div>
+              <span className="hidden md:inline text-[#333]">·</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#555]">Location</span>
+                <InlineField
+                  value={report.location ?? ''}
+                  onSave={v => saveField('location', v)}
+                  placeholder="—"
+                  className="text-sm text-[#a1a1aa]"
+                />
+              </div>
+              <span className="hidden md:inline text-[#333]">·</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#555]">Prepared by</span>
+                <InlineField
+                  value={report.prepared_by ?? ''}
+                  onSave={v => saveField('prepared_by', v)}
+                  placeholder="—"
+                  className="text-sm text-[#a1a1aa]"
+                />
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3 shrink-0 pt-0.5">
