@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronDown, ChevronRight, Plus, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { addSectionRow, updateSectionRow, deleteSectionRow } from '@/actions'
 
 export type FieldType = 'text' | 'date' | 'select' | 'checkbox' | 'textarea'
 
@@ -67,7 +68,7 @@ export function EditableSection({
 
   async function handleUpdate(rowId: string, field: string, value: unknown) {
     setRows(prev => prev.map(r => r.id === rowId ? { ...r, [field]: value } : r))
-    await supabase.from(tableName).update({ [field]: value }).eq('id', rowId)
+    await updateSectionRow(tableName, rowId, field, value, reportId)
     showSaved()
   }
 
@@ -76,13 +77,13 @@ export function EditableSection({
       report_id: reportId,
       ...defaultRowValues,
     }
-    const { data } = await supabase.from(tableName).insert(newRow).select().single()
-    if (data) setRows(prev => [...prev, data as Record<string, unknown>])
+    const result = await addSectionRow(tableName, newRow, reportId)
+    if (result) setRows(prev => [...prev, result])
   }
 
   async function handleDelete(rowId: string) {
     setRows(prev => prev.filter(r => r.id !== rowId))
-    await supabase.from(tableName).delete().eq('id', rowId)
+    await deleteSectionRow(tableName, rowId, reportId)
   }
 
   return (

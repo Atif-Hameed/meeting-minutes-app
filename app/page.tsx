@@ -1,32 +1,16 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { formatDate } from '@/lib/utils'
 import TopBar from '@/components/top-bar'
-import type { Report } from '@/lib/types'
+import { DeleteReportButton } from '@/components/reports/delete-report-button'
 
-export default function DashboardPage() {
-  const [reports, setReports] = useState<Report[]>([])
-  const [loading, setLoading] = useState(true)
+export default async function DashboardPage() {
+  const { data: reports } = await supabase
+    .from('reports')
+    .select('*')
+    .order('date', { ascending: false })
 
-  useEffect(() => {
-    supabase
-      .from('reports')
-      .select('*')
-      .order('date', { ascending: false })
-      .then(({ data }) => {
-        setReports(data ?? [])
-        setLoading(false)
-      })
-  }, [])
-
-  async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return
-    setReports(prev => prev.filter(r => r.id !== id))
-    await supabase.from('reports').delete().eq('id', id)
-  }
+  const list = reports ?? []
 
   return (
     <div className="min-h-screen bg-[#0f0f0f]">
@@ -37,9 +21,7 @@ export default function DashboardPage() {
           <p className="text-xs text-[#555] mt-0.5">All meeting minutes</p>
         </div>
 
-        {loading ? (
-          <p className="text-sm text-[#444]">Loading...</p>
-        ) : reports.length === 0 ? (
+        {list.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="text-sm text-[#555]">No reports yet.</p>
             <Link
@@ -51,7 +33,6 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="border border-[#2a2a2a] rounded-md overflow-hidden">
-            {/* Table header */}
             <div className="grid grid-cols-[2fr_1.2fr_120px_1fr_36px] px-4 py-2.5 bg-[#111] border-b border-[#2a2a2a]">
               <div className="text-[10px] font-medium text-[#444] uppercase tracking-widest">Meeting Title</div>
               <div className="text-[10px] font-medium text-[#444] uppercase tracking-widest">Project</div>
@@ -60,9 +41,8 @@ export default function DashboardPage() {
               <div />
             </div>
 
-            {/* Rows */}
             <div className="divide-y divide-[#1c1c1c]">
-              {reports.map(report => (
+              {list.map(report => (
                 <div
                   key={report.id}
                   className="grid grid-cols-[2fr_1.2fr_120px_1fr_36px] px-4 py-3 hover:bg-[#161616] transition-colors group"
@@ -79,13 +59,7 @@ export default function DashboardPage() {
                   <Link href={`/reports/${report.id}`} className="text-sm text-[#a1a1aa] truncate">
                     {report.location ?? '—'}
                   </Link>
-                  <button
-                    onClick={() => handleDelete(report.id, report.meeting_title)}
-                    className="flex items-center justify-center opacity-0 group-hover:opacity-100 text-[#444] hover:text-[#ef4444] transition-all"
-                    title="Delete report"
-                  >
-                    <Trash2 className="size-3.5" />
-                  </button>
+                  <DeleteReportButton id={report.id} title={report.meeting_title} />
                 </div>
               ))}
             </div>
@@ -94,13 +68,4 @@ export default function DashboardPage() {
       </main>
     </div>
   )
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—'
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }

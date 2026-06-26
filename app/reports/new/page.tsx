@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import { formatDate } from '@/lib/utils'
+import { createReport } from '@/actions'
 import TopBar from '@/components/top-bar'
 import type { Report } from '@/lib/types'
 
@@ -45,42 +47,14 @@ export default function NewReportPage() {
     setSubmitting(true)
 
     try {
-      // Find or create project
-      let projectId: string
-      const { data: existing } = await supabase
-        .from('projects')
-        .select('id')
-        .eq('name', form.projectName.trim())
-        .maybeSingle()
-
-      if (existing) {
-        projectId = existing.id
-      } else {
-        const { data: newProject, error } = await supabase
-          .from('projects')
-          .insert({ name: form.projectName.trim() })
-          .select('id')
-          .single()
-        if (error || !newProject) throw error
-        projectId = newProject.id
-      }
-
-      // Create report
-      const { data: report, error: reportError } = await supabase
-        .from('reports')
-        .insert({
-          project_id: projectId,
-          meeting_title: form.meetingTitle.trim(),
-          project_name: form.projectName.trim(),
-          date: form.date,
-          location: form.location.trim() || null,
-          prepared_by: form.preparedBy.trim() || null,
-        })
-        .select('id')
-        .single()
-
-      if (reportError || !report) throw reportError
-      router.push(`/reports/${report.id}`)
+      const reportId = await createReport({
+        meetingTitle: form.meetingTitle.trim(),
+        projectName: form.projectName.trim(),
+        date: form.date,
+        location: form.location.trim(),
+        preparedBy: form.preparedBy.trim(),
+      })
+      router.push(`/reports/${reportId}`)
     } catch (err) {
       console.error(err)
       setSubmitting(false)
@@ -202,13 +176,4 @@ export default function NewReportPage() {
       </main>
     </div>
   )
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return ''
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  })
 }
